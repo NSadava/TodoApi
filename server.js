@@ -19,7 +19,7 @@ app.get("/", function(req,res){
 
 
 /*
-	GET ?Search parameter
+	GET /todos?compelted=false
 */
 app.get("/todos",function(req, res){
 	
@@ -28,10 +28,16 @@ app.get("/todos",function(req, res){
 	var arrFilteredData = arrData;
 
 	if(queryParams.hasOwnProperty("completed") && queryParams.completed === "true"){
-		arrFilteredData = _.where(arrData, {completed : true});
+		arrFilteredData = _.where(arrFilteredData, {completed : true});
 	} else if(queryParams.hasOwnProperty("completed") && queryParams.completed === "false"){
-		arrFilteredData = _.where(arrData, {completed : false});
+		arrFilteredData = _.where(arrFilteredData, {completed : false});
 	} 
+
+	if(queryParams.hasOwnProperty("q") && queryParams.q.length > 0){
+		arrFilteredData = _.filter(arrFilteredData, function(obj){
+			return obj.description.indexOf(queryParams.q) > -1;
+		})
+	}
 
 	res.json(arrFilteredData);
 });
