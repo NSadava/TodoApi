@@ -18,8 +18,22 @@ app.get("/", function(req,res){
 });
 
 
+/*
+	GET ?Search parameter
+*/
 app.get("/todos",function(req, res){
-	res.json(arrData);
+	
+	var queryParams = req.query;
+
+	var arrFilteredData = arrData;
+
+	if(queryParams.hasOwnProperty("completed") && queryParams.completed === "true"){
+		arrFilteredData = _.where(arrData, {completed : true});
+	} else if(queryParams.hasOwnProperty("completed") && queryParams.completed === "false"){
+		arrFilteredData = _.where(arrData, {completed : false});
+	} 
+
+	res.json(arrFilteredData);
 });
 
 app.get("/todos/:id",function(req, res){
