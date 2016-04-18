@@ -2,15 +2,16 @@ var express = require('express');
 var app = express();
 var PORT = process.env.PORT || 3000;
 
-var arrData = [{
-	id: 1,
-	description: "Testing Api",
-	completed: false,
-},{
-	id: 2,
-	description: "Testing Api in postman",
-	completed: false,
-}];
+var _ = require("underscore");
+
+var nextId = 1;
+
+var bodyParser = require('body-parser')
+
+app.use(bodyParser.json());
+
+
+var arrData = [];
 
 app.get("/", function(req,res){
 	res.send("Welcome to todo api");
@@ -22,14 +23,16 @@ app.get("/todos",function(req, res){
 });
 
 app.get("/todos/:id",function(req, res){
-	var matchedObj;	
+		
 	var todoId = req.params.id;
 
-	arrData.forEach(function(obj){
-		if(obj.id == todoId){
-			matchedObj = obj;
-		}
-	});
+
+	var matchedObj = _.findWhere(arrData,{id : todoId});
+	// arrData.forEach(function(obj){
+	// 	if(obj.id == todoId){
+	// 		matchedObj = obj;
+	// 	}
+	// });
 
 	if(matchedObj){
 		res.json(matchedObj);
@@ -39,6 +42,18 @@ app.get("/todos/:id",function(req, res){
 
 });
 
+/*
+	POST METHODS
+*/
+
+app.post("/todos",function(req, res){
+	var body = req.body;
+	body.id = nextId;
+	arrData.push(body);
+	nextId++;
+
+	res.json(body);
+});
 
 
 app.listen(PORT);
